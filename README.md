@@ -1,2 +1,2 @@
 # PokeyBall_SkyGlider_Game
-Combination of Pokey Ball and Sky Glider Game demo
+Combination of Pokey Ball and Sky Glider Game Prototype
