@@ -2,15 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//SwipeStick.cs gives ways to this script to control the stick
+//Added on Stick_long_Animated
+
 public class StickController : MonoBehaviour
 {
     private Animator stickAnimator;
+    
+    //Other scripts
     private SwipeStick swipeStickScript;
+    private Player playerScript;
 
     private bool isStickPulling = false;
-    private bool isStickReleasing = false;
 
-    private bool isStickActive = true; //Swiping stick components are  active
+    private int bendStateHash;//calling state for performance 
 
     // Start is called before the first frame update
     private void Awake()
@@ -18,62 +23,55 @@ public class StickController : MonoBehaviour
         stickAnimator = this.GetComponent<Animator>();
         
         swipeStickScript = this.GetComponent<SwipeStick>();
+        playerScript = GameObject.FindGameObjectWithTag("Rocketman").GetComponent<Player>();
 
     }
     void Start()
     {
-        setStickSpeed(0f);
+        SetStickSpeed(0f);
+        bendStateHash = Animator.StringToHash("Base Layer.Armature|Bend_Stick");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isStickActive)
-        {
-            if (isStickPulling)
-            {
-                stickAnimator.Play("Base Layer.Armature|Bend_Stick", 0, swipeStickScript.getCurrentPositionRate());
-            }
-            else if (isStickReleasing)
-            {
-                if (stickAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
-                {
-                    isStickActive = false;
-                    Invoke("DisactivateStick", 1.0f);
-                    //Call Throw ball here
-                }
-            }
-        }
-        
+         if (isStickPulling)
+         {
+             stickAnimator.Play(bendStateHash, 0, swipeStickScript.GetCurrentPositionRate());
+         }
 
     }
 
     public void Pull()
     {
-        setStickSpeed(0f);
+        SetStickSpeed(0f);
         isStickPulling = true;
     }
     public void Reverse() //Rereversing stick on unenough swipe
     {
         isStickPulling = false;
-        setStickSpeed(-1f);
+        SetStickSpeed(-1f);
     }
     public void Release()
     {
         isStickPulling = false;
-        isStickReleasing = true;
         stickAnimator.SetTrigger("Release");
-        setStickSpeed(1f);
+        SetStickSpeed(1f);
+        playerScript.AssignVelocity(swipeStickScript.GetCurrentPositionRate());
     }
-    public void setStickSpeed(float value) //Changing animator speed to stop,reverse and forward
+    public void ReleaseFinished()
+    {
+        DisableStickComponents(); 
+    }
+    public void SetStickSpeed(float value) //Changing animator speed to stop,reverse and forward
     {
         stickAnimator.SetFloat("SpeedMultiplier", value);
     }
 
-    private void DisactivateStick() //Disable swiping  stick components
+    public void DisableStickComponents()//components that won't be used again
     {
         swipeStickScript.enabled = false;
-        stickAnimator.enabled = false;
+        this.GetComponent<Animator>().enabled = false;
         this.enabled = false;
     }
 }

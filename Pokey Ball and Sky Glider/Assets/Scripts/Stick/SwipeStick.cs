@@ -2,20 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Swipe controller for the stick
+//Sends ways to StickController.cs
+//Added on Stick object
+
 public class SwipeStick : MonoBehaviour
 {
-   //swipe controller for the stick
-
-
+   //Access other script
     StickController stickcontrollerScript;
 
-    private float firstPosition;
+    private float firstPosition; 
 
     private float currenPositionRate;  //0 min, 1 max, swiping percentage
 
+    private bool isSwipable = true;
+
     //Threshold
-    private const float minDistance = 0.25f; //if less, stick gets reverse back
-    private const float maxDistance = 0.5f;  //max swipe length
+    private const float MinDistance = 0.2f; //if less, stick gets reverse back
+    private const float MaxDistance = 0.4f;  //max swipe length
 
 
     private void Awake()
@@ -24,44 +28,48 @@ public class SwipeStick : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        checkSwipe();
+        if (isSwipable)
+        {
+            CheckSwipe();
+        }
+           
     }
 
-    private void checkSwipe()
+    private void CheckSwipe()
     {
             if (Input.GetMouseButtonDown(0))
             {
                 firstPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
-                setCurrentPositionRate();
+                currenPositionRate = 0;
                 stickcontrollerScript.Pull();
             }
             else if (Input.GetMouseButton(0))
             {
-                setCurrentPositionRate();
+                SetCurrentPositionRate();
             }
             else if (Input.GetMouseButtonUp(0))
             {
-                setCurrentPositionRate();
-                verifySwipe();
+                SetCurrentPositionRate();
+                VerifySwipe();
             }
 
     }
 
-    private void setCurrentPositionRate() //0 min, 1 max, swiping percentage
+    private void SetCurrentPositionRate() //0 min, 1 max, swiping percentage
     {
         float distance = CheckSwipeDistance();
-        if (distance >= maxDistance)
+        if (distance >= MaxDistance)
             currenPositionRate = 1f;
         else if (distance <= 0)
             currenPositionRate = 0f;
         else
         {
-            currenPositionRate = distance / maxDistance;
+            currenPositionRate = distance / MaxDistance;
         }
     }
-    public float getCurrentPositionRate()
+    public float GetCurrentPositionRate()
     {
         return currenPositionRate;
     }
@@ -71,11 +79,12 @@ public class SwipeStick : MonoBehaviour
         float lastPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
         return firstPosition - lastPosition;
     }
-    private void verifySwipe() //decides the stick to reverse or release depending on swipe disatance
+    private void VerifySwipe() //decides the stick to reverse or release depending on swipe disatance
     {
-        if (CheckSwipeDistance() >= minDistance)
+        if (CheckSwipeDistance() >= MinDistance)
         {
-            stickcontrollerScript.Release();
+            isSwipable = false;
+            stickcontrollerScript.Release();          
         }
         else
         {
