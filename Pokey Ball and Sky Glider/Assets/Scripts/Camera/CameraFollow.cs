@@ -50,7 +50,7 @@ public class CameraFollow : MonoBehaviour
                 this.enabled = false; //they fitted as child and no more needed to follow
             }
         }
-        
+
     }
 
     public void Follow()

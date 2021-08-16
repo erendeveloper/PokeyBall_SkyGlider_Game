@@ -6,9 +6,9 @@ using UnityEngine;
 //Added on Player object
 public class Player : MonoBehaviour
 {
-    private const float ThrowingSpeed = 100f;
-    private const float HorizontalRotationSpeed = 10f;
-    private const float ForwardRotationSpeed = 3f;
+    private const float ThrowingSpeed = 15f;
+    private const float HorizontalRotationSpeed = 50f;
+    private const float ForwardRotationSpeed = 1000f;
     private const float ThrowingAngle = 45f;
     private Vector3 forceVelocity;
 
@@ -23,13 +23,19 @@ public class Player : MonoBehaviour
 
     private Rigidbody playerRigidbody;
 
+    //bounce factors on platforms
+    private const float CubeBounceFactor = 1f;
+    private const float CylinderBounceFactor = 2f;
+
     //Access otrher script
     SwipePlayer swipePlayerScript;
+    GameManager gameManagerScript;
 
     void Awake()
     {
         playerRigidbody = GetComponent<Rigidbody>();
         swipePlayerScript = GetComponent<SwipePlayer>();
+        gameManagerScript = Camera.main.GetComponent<GameManager>();
     }
     // Start is called before the first frame update
     void Start()
@@ -43,7 +49,7 @@ public class Player : MonoBehaviour
         
         if (isRotating)
         {
-            body.Rotate(ForwardRotationSpeed, 0, 0, Space.Self);
+            body.Rotate(ForwardRotationSpeed*Time.deltaTime, 0, 0, Space.Self);
         }
         else if (isFlying)
         {
@@ -65,7 +71,7 @@ public class Player : MonoBehaviour
     {
         this.transform.parent = null;
         transform.rotation = Quaternion.identity;
-        playerRigidbody.AddForce(forceVelocity);
+        playerRigidbody.velocity = forceVelocity;
         Fall();
         Camera.main.GetComponent<CameraFollow>().Follow();
         swipePlayerScript.enabled = true;
@@ -112,6 +118,27 @@ public class Player : MonoBehaviour
     public void TurnHorizontally(float rate)
     {
         transform.Rotate(Vector3.up*rate * Time.deltaTime * HorizontalRotationSpeed);
+        playerRigidbody.velocity = transform.forward*forceVelocity.z;
     }
-    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Cube"))
+        {
+            playerRigidbody.velocity=new Vector3(playerRigidbody.velocity.x, forceVelocity.y * CubeBounceFactor, playerRigidbody.velocity.z);
+        }
+        else if (other.CompareTag("Cylinder"))
+        {
+            playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, forceVelocity.y * CylinderBounceFactor, playerRigidbody.velocity.z);
+        }
+        else if (other.CompareTag("Ground"))
+        {
+            gameManagerScript.GameOver();
+            swipePlayerScript.enabled = false;
+            isRotating = false;
+            isFlying = false;
+            playerRigidbody.useGravity = false;
+            playerRigidbody.velocity = Vector3.zero;
+        }
+    }
+
 }

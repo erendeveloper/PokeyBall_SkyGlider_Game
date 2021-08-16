@@ -16,7 +16,7 @@ public class SwipePlayer : MonoBehaviour
     private float currenPositionRate;  //0 min, 1 max, swiping percentage
 
 
-    private const float MinDistance = 0.1f;  //max swipe length
+    private const float MinDistance = 0.01f;  //max swipe length
     private const float MaxDistance = 0.4f;  //max swipe length
 
 
@@ -55,14 +55,18 @@ public class SwipePlayer : MonoBehaviour
         float distance = CheckSwipeDistance();
 
         if (Mathf.Abs(distance) >= MaxDistance)
+        {
             currenPositionRate = 1f;
-        else if (distance <= MinDistance)
-            currenPositionRate = 0f;
+            currenPositionRate *= Mathf.Sign(distance);
+        }
+            
+        //else if (distance <= MinDistance)
+        //    currenPositionRate = 0f;
         else
         {
             currenPositionRate = distance / MaxDistance;
         }
-        currenPositionRate *= Mathf.Sign(distance);
+        //currenPositionRate *= Mathf.Sign(distance);
 
     }
     public float GetCurrentPositionRate()
