@@ -27,7 +27,7 @@ public class SwipePlayer : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {Debug.Log(Camera.main.ScreenToViewportPoint(Input.mousePosition).x);
             CheckSwipe();
     }
 
@@ -59,12 +59,14 @@ public class SwipePlayer : MonoBehaviour
             currenPositionRate = 1f;
             currenPositionRate *= Mathf.Sign(distance);
         }
-
+        else if (distance <= 0f)
+        {
+            currenPositionRate = 0f;
+        }
         else
         {
             currenPositionRate = distance / MaxDistance;
         }
-
     }
     public float GetCurrentPositionRate()
     {
@@ -74,7 +76,7 @@ public class SwipePlayer : MonoBehaviour
     public float CheckSwipeDistance() //Calculates swipe length
     {
         float lastPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
-        return lastPosition - firstPosition;
+        return Camera.main.ScreenToViewportPoint(Input.mousePosition).x -0.5f; //0.5 is the miidle of the screen
     }
 
 }
