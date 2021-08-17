@@ -36,7 +36,7 @@ public class SwipePlayer : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
              firstPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
-             playerScript.Fly();
+             playerScript.ToggleFallAndFly(); //Fly
         }
         if (Input.GetMouseButton(0))
         {
@@ -45,7 +45,7 @@ public class SwipePlayer : MonoBehaviour
         }
         if (Input.GetMouseButtonUp(0))
         {
-             playerScript.Fall();
+             playerScript.ToggleFallAndFly(); //Fall
         }
 
     }
@@ -59,14 +59,11 @@ public class SwipePlayer : MonoBehaviour
             currenPositionRate = 1f;
             currenPositionRate *= Mathf.Sign(distance);
         }
-            
-        //else if (distance <= MinDistance)
-        //    currenPositionRate = 0f;
+
         else
         {
             currenPositionRate = distance / MaxDistance;
         }
-        //currenPositionRate *= Mathf.Sign(distance);
 
     }
     public float GetCurrentPositionRate()

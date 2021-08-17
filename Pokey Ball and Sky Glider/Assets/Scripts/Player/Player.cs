@@ -6,30 +6,32 @@ using UnityEngine;
 //Added on Player object
 public class Player : MonoBehaviour
 {
+    //Access other script
+    SwipePlayer swipePlayerScript;
+    GameManager gameManagerScript;
+
+    public Animator playerAnimator; //added on rocketman
+    public Transform body; //for rotating, child of player,  solid part of player
+    private Rigidbody playerRigidbody;
+
     private const float ThrowingSpeed = 15f;
     private const float HorizontalRotationSpeed = 50f;
     private const float ForwardRotationSpeed = 1000f;
     private const float ThrowingAngle = 45f;
-    private Vector3 forceVelocity;
 
+    private Vector3 forceVelocity; //throwing velocity depending on stick tension
     private Quaternion initialBodyQuaternion;
-
-    public Transform body; //for rotating, child of player,  solid part of player
-
-    public Animator playerAnimator; //added on rocketman
 
     private bool isFlying = false;
     private bool isRotating = false;
-
-    private Rigidbody playerRigidbody;
 
     //bounce factors on platforms
     private const float CubeBounceFactor = 1f;
     private const float CylinderBounceFactor = 2f;
 
-    //Access otrher script
-    SwipePlayer swipePlayerScript;
-    GameManager gameManagerScript;
+    private const float GravityFactor=0.2f;//Factor of falling speed, applied on gravity
+
+    
 
     void Awake()
     {
@@ -45,8 +47,7 @@ public class Player : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        
+    {       
         if (isRotating)
         {
             body.Rotate(ForwardRotationSpeed*Time.deltaTime, 0, 0, Space.Self);
@@ -72,54 +73,49 @@ public class Player : MonoBehaviour
         this.transform.parent = null;
         transform.rotation = Quaternion.identity;
         playerRigidbody.velocity = forceVelocity;
-        Fall();
+        ToggleFallAndFly();
+        playerAnimator.SetBool("Rotating", true);
         Camera.main.GetComponent<CameraFollow>().Follow();
         swipePlayerScript.enabled = true;
     }
-    public void Fall(){
-        toggleGravity();
-        isFlying = false;
-        isRotating = true;
-        toggleAnimatorParameters();
-    }
-    public void Fly()
+    public void ToggleFallAndFly() //Switch between falling and flying
     {
-        toggleGravity();
-        isRotating = false;
-        isFlying = true;
-        toggleAnimatorParameters();
-    }
-    private void toggleGravity()//enabling gravity depending on rotating or flying
-    {
-        if (!playerRigidbody.useGravity) //notr fall
+        if (!isRotating)
         {
+            //rotate
             playerRigidbody.useGravity = true;
-        }
-        else //not fly
-        {
-            playerRigidbody.useGravity = false;
-            playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, 0, playerRigidbody.velocity.z);
-        }
-    }
-    private void toggleAnimatorParameters() //setting state paarameters depending on rotating or flying
-    {
-        if (isRotating)
-        {
+            isFlying = false;
+            isRotating = true;
             playerAnimator.SetBool("Flying", false);
             playerAnimator.SetBool("Rotating", true);
         }
-        else //flying
+        else
         {
+            //fly
+            playerRigidbody.useGravity = false;
+            playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, Physics.gravity.y * GravityFactor, playerRigidbody.velocity.z);
+            isRotating = false;
+            isFlying = true;
             playerAnimator.SetBool("Rotating", false);
             playerAnimator.SetBool("Flying", true);
         }
     }
 
+
     public void TurnHorizontally(float rate)
     {
         transform.Rotate(Vector3.up*rate * Time.deltaTime * HorizontalRotationSpeed);
-        playerRigidbody.velocity = transform.forward*forceVelocity.z;
+
+        //save forward speed on rotate way
+        //z component is the first applied force, movement speed
+        Vector3 normalizedVelocity = transform.forward;// 
+        float x = normalizedVelocity.x * forceVelocity.z;
+        float z = normalizedVelocity.z * forceVelocity.z;
+
+        playerRigidbody.velocity= new Vector3(x, playerRigidbody.velocity.y, z);
+
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Cube"))
