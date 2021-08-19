@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Added on state "Armature|Release_Stick"
+//Added on state "Armature|Release_Stick" on stick animator
 //OnStateExit behaviour on release
 public class StickReleaseBehaviour : StateMachineBehaviour
 {
-    //this script is added on release state on stick animator
-
     private StickController stickControllerScript;
 
     private void Awake()
     {
-        stickControllerScript = FindObjectOfType<StickController>();
+        stickControllerScript = GameObject.FindGameObjectWithTag("Stick").GetComponent<StickController>();
     }
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

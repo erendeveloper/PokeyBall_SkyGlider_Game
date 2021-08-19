@@ -4,7 +4,7 @@ using UnityEngine;
 
 //Player Controller
 //Added on Player object
-public class Player : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     //Access other script
     SwipePlayer swipePlayerScript;
@@ -18,12 +18,15 @@ public class Player : MonoBehaviour
     private const float HorizontalRotationSpeed = 50f;
     private const float ForwardRotationSpeed = 1000f;
     private const float ThrowingAngle = 45f;
+    private const float BodyAngle = 90f;//looks downwarn while flying, initial player Vector3(180,180,180)
+    private const float MaxWingAngle = 45f;
 
     private Vector3 forceVelocity; //throwing velocity depending on stick tension
     private Quaternion initialBodyQuaternion;
 
     private bool isFlying = false;
-    private bool isRotating = false;
+    private bool isFalling = false;
+    private bool isWingAngleIdentity = true; //Quaternion.eular(0,0,0)
 
     //bounce factors on platforms
     private const float CubeBounceFactor = 1f;
@@ -47,15 +50,8 @@ public class Player : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {       
-        if (isRotating)
-        {
-            body.Rotate(ForwardRotationSpeed*Time.deltaTime, 0, 0, Space.Self);
-        }
-        else if (isFlying)
-        {
-            body.localRotation = Quaternion.Lerp(body.localRotation, initialBodyQuaternion, ForwardRotationSpeed * Time.deltaTime);
-        }
+    {
+        RotateBody();
     }
 
     public void AssignVelocity(float rate) //for throwing
@@ -80,12 +76,12 @@ public class Player : MonoBehaviour
     }
     public void ToggleFallAndFly() //Switch between falling and flying
     {
-        if (!isRotating)
+        if (!isFalling)
         {
-            //rotate
+            //fall
             playerRigidbody.useGravity = true;
             isFlying = false;
-            isRotating = true;
+            isFalling = true;
             playerAnimator.SetBool("Flying", false);
             playerAnimator.SetBool("Rotating", true);
         }
@@ -94,10 +90,11 @@ public class Player : MonoBehaviour
             //fly
             playerRigidbody.useGravity = false;
             playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, Physics.gravity.y * GravityFactor, playerRigidbody.velocity.z);
-            isRotating = false;
+            isFalling = false;
             isFlying = true;
             playerAnimator.SetBool("Rotating", false);
             playerAnimator.SetBool("Flying", true);
+            isWingAngleIdentity = false; //wings have horizontal angle while turning
         }
     }
 
@@ -130,11 +127,36 @@ public class Player : MonoBehaviour
         {
             gameManagerScript.GameOver();
             swipePlayerScript.enabled = false;
-            isRotating = false;
+            isFalling = false;
             isFlying = false;
             playerRigidbody.useGravity = false;
             playerRigidbody.velocity = Vector3.zero;
         }
+    }
+    private void RotateBody()//rotate forward and rotate wings
+    {
+        if (isFalling)
+        {
+            if (!isWingAngleIdentity)//make wings identity
+            {
+                body.localRotation = Quaternion.Lerp(body.localRotation, Quaternion.identity, ForwardRotationSpeed * Time.deltaTime);
+                float angleThreshold = Quaternion.Angle(body.localRotation, Quaternion.identity);
+                if (angleThreshold < 0.001f)
+                {
+                    isWingAngleIdentity = true;
+                }
+            }
+            else //rotate forward
+            {
+                body.Rotate(ForwardRotationSpeed * Time.deltaTime, 0, 0, Space.Self);
+            }
+        }
+        else if (isFlying) //rotate wings
+        {
+            float wingAngle = swipePlayerScript.GetCurrentPositionRate() * MaxWingAngle;
+            Vector3 targetRotation = new Vector3(BodyAngle + wingAngle, BodyAngle, BodyAngle);
+            body.localRotation = Quaternion.Lerp(body.localRotation, Quaternion.Euler(targetRotation), ForwardRotationSpeed * Time.deltaTime);
+        }     
     }
 
 }

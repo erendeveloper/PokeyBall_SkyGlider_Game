@@ -8,6 +8,7 @@ TagManager:
   - Ground
   - Cube
   - Cylinder
+  - Stick
   layers:
   - Default
   - TransparentFX

@@ -9,7 +9,7 @@ using UnityEngine;
 public class SwipePlayer : MonoBehaviour
 {
     //Access other script
-    Player playerScript;
+    PlayerController playerControllerScript;
 
     private float firstPosition;
 
@@ -22,12 +22,12 @@ public class SwipePlayer : MonoBehaviour
 
     private void Awake()
     {
-        playerScript = this.GetComponent<Player>();
+        playerControllerScript = this.GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
     void Update()
-    {Debug.Log(Camera.main.ScreenToViewportPoint(Input.mousePosition).x);
+    {
             CheckSwipe();
     }
 
@@ -36,16 +36,16 @@ public class SwipePlayer : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
              firstPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
-             playerScript.ToggleFallAndFly(); //Fly
+             playerControllerScript.ToggleFallAndFly(); //Fly
         }
         if (Input.GetMouseButton(0))
         {
              SetCurrentPositionRate();
-             playerScript.TurnHorizontally(GetCurrentPositionRate());
+             playerControllerScript.TurnHorizontally(GetCurrentPositionRate());
         }
         if (Input.GetMouseButtonUp(0))
         {
-             playerScript.ToggleFallAndFly(); //Fall
+             playerControllerScript.ToggleFallAndFly(); //Fall
         }
 
     }
@@ -58,10 +58,6 @@ public class SwipePlayer : MonoBehaviour
         {
             currenPositionRate = 1f;
             currenPositionRate *= Mathf.Sign(distance);
-        }
-        else if (distance <= 0f)
-        {
-            currenPositionRate = 0f;
         }
         else
         {

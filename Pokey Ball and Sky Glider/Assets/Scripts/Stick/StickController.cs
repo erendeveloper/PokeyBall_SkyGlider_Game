@@ -11,7 +11,7 @@ public class StickController : MonoBehaviour
     
     //Other scripts
     private SwipeStick swipeStickScript;
-    private Player playerScript;
+    private PlayerController playerControllerScript;
 
     private bool isStickPulling = false;
 
@@ -23,7 +23,7 @@ public class StickController : MonoBehaviour
         stickAnimator = this.GetComponent<Animator>();
         
         swipeStickScript = this.GetComponent<SwipeStick>();
-        playerScript = GameObject.FindGameObjectWithTag("Rocketman").GetComponent<Player>();
+        playerControllerScript = GameObject.FindGameObjectWithTag("Rocketman").GetComponent<PlayerController>();
 
     }
     void Start()
@@ -57,7 +57,7 @@ public class StickController : MonoBehaviour
         isStickPulling = false;
         stickAnimator.SetTrigger("Release");
         SetStickSpeed(1f);
-        playerScript.AssignVelocity(swipeStickScript.GetCurrentPositionRate());
+        playerControllerScript.AssignVelocity(swipeStickScript.GetCurrentPositionRate());
     }
     public void ReleaseFinished()
     {

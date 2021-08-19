@@ -1418,6 +1418,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stick_long_Animated
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: aea1cdbbc89b14a10855ec48a5212c9a, type: 3}
+      propertyPath: m_TagString
+      value: Stick
+      objectReference: {fileID: 0}
     - target: {fileID: 3745943266550497092, guid: aea1cdbbc89b14a10855ec48a5212c9a, type: 3}
       propertyPath: m_LocalPosition.z
       value: 1.5
@@ -1485,6 +1489,34 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2861817226264673752, guid: 6765ba5532db9c849957d3b63b7a0441, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3669459639976260233, guid: 6765ba5532db9c849957d3b63b7a0441, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3669459639976260233, guid: 6765ba5532db9c849957d3b63b7a0441, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3669459639976260233, guid: 6765ba5532db9c849957d3b63b7a0441, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3669459639976260233, guid: 6765ba5532db9c849957d3b63b7a0441, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3669459639976260233, guid: 6765ba5532db9c849957d3b63b7a0441, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3669459639976260233, guid: 6765ba5532db9c849957d3b63b7a0441, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3669459639976260233, guid: 6765ba5532db9c849957d3b63b7a0441, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
