@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
         playerRigidbody.velocity = forceVelocity;
         ToggleFallAndFly();
         playerAnimator.SetBool("Rotating", true);
-        Camera.main.GetComponent<CameraFollow>().Follow();
+        Camera.main.GetComponent<CameraFollow>().StartFollowing();
         swipePlayerScript.enabled = true;
     }
     public void ToggleFallAndFly() //Switch between falling and flying
