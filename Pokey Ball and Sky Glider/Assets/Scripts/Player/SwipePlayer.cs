@@ -11,13 +11,14 @@ public class SwipePlayer : MonoBehaviour
     //Access other script
     PlayerController playerControllerScript;
 
-    private float firstPosition;
+    private bool isSwiping = false;
+    public bool IsSwiping{ set { isSwiping = value; } }//necessary if player stand on a platform while playing, to rotate
+
+    private float firstSwipePosition; 
 
     private float currenPositionRate;  //0 min, 1 max, swiping percentage
 
-
-    private const float MinDistance = 0.01f;  //max swipe length
-    private const float MaxDistance = 0.4f;  //max swipe length
+    private const float MaxSwipeDistance = 0.4f;  //max swipe length
 
 
     private void Awake()
@@ -35,18 +36,24 @@ public class SwipePlayer : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-             firstPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
-             playerControllerScript.ToggleFallAndFly(); //Fly
+             isSwiping = true;
+            firstSwipePosition = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
+             playerControllerScript.ToggleFallAndFly(); //Fly             
         }
-        if (Input.GetMouseButton(0))
+        if (isSwiping)
         {
-             SetCurrentPositionRate();
-             playerControllerScript.TurnHorizontally(GetCurrentPositionRate());
+            if (Input.GetMouseButton(0))
+            {
+                SetCurrentPositionRate();
+                playerControllerScript.TurnHorizontally(GetCurrentPositionRate());
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                isSwiping = false;
+                playerControllerScript.ToggleFallAndFly(); //Fall
+            }
         }
-        if (Input.GetMouseButtonUp(0))
-        {
-             playerControllerScript.ToggleFallAndFly(); //Fall
-        }
+        
 
     }
 
@@ -54,14 +61,14 @@ public class SwipePlayer : MonoBehaviour
     {
         float distance = CheckSwipeDistance();
 
-        if (Mathf.Abs(distance) >= MaxDistance)
+        if (Mathf.Abs(distance) >= MaxSwipeDistance)
         {
             currenPositionRate = 1f;
             currenPositionRate *= Mathf.Sign(distance);
         }
         else
         {
-            currenPositionRate = distance / MaxDistance;
+            currenPositionRate = distance / MaxSwipeDistance;
         }
     }
     public float GetCurrentPositionRate()
@@ -73,6 +80,11 @@ public class SwipePlayer : MonoBehaviour
     {
         float lastPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
         return Camera.main.ScreenToViewportPoint(Input.mousePosition).x -0.5f; //0.5 is the miidle of the screen
+    }
+
+    public void setSwiping(bool state)
+    {
+        isSwiping = state;
     }
 
 }

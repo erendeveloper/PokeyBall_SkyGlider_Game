@@ -6,9 +6,11 @@ TagManager:
   tags:
   - Rocketman
   - Ground
-  - Cube
-  - Cylinder
   - Stick
+  - CubeTopSurface
+  - CylinderTopSurface
+  - Cylinder
+  - PlatformSideSurface
   layers:
   - Default
   - TransparentFX

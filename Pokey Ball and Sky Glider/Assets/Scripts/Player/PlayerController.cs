@@ -113,26 +113,43 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)//Top of platform for bouncing
     {
-        if (other.CompareTag("Cube"))
+        if (other.CompareTag("CubeTopSurface"))
         {
+            RotateOnPlatform();
             playerRigidbody.velocity=new Vector3(playerRigidbody.velocity.x, forceVelocity.y * CubeBounceFactor, playerRigidbody.velocity.z);
         }
-        else if (other.CompareTag("Cylinder"))
+        else if (other.CompareTag("CylinderTopSurface"))
         {
+            RotateOnPlatform();
             playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, forceVelocity.y * CylinderBounceFactor, playerRigidbody.velocity.z);
         }
-        else if (other.CompareTag("Ground"))
+    }
+    private void OnCollisionEnter(Collision other)//Sides of platform for falling
+    {
+        playerAnimator.SetBool("Flying", false);       
+        playerRigidbody.useGravity = true;
+        swipePlayerScript.enabled = false;
+        isFalling = false;
+        isFlying = false;
+
+        if (other.gameObject.CompareTag("Ground"))
         {
             gameManagerScript.GameOver();
-            swipePlayerScript.enabled = false;
-            isFalling = false;
-            isFlying = false;
-            playerRigidbody.useGravity = false;
             playerRigidbody.velocity = Vector3.zero;
+
+        }
+        
+    }
+    private void RotateOnPlatform() { //if player stands on a platform while flying, it rotates
+        swipePlayerScript.IsSwiping = false;
+        if (isFlying)
+        {
+            ToggleFallAndFly();
         }
     }
+
     private void RotateBody()//rotate forward and rotate wings
     {
         if (isFalling)
