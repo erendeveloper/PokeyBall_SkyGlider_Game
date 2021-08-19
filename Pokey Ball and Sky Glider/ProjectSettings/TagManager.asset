@@ -9,7 +9,6 @@ TagManager:
   - Stick
   - CubeTopSurface
   - CylinderTopSurface
-  - Cylinder
   - PlatformSideSurface
   layers:
   - Default

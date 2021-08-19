@@ -128,17 +128,20 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionEnter(Collision other)//Sides of platform for falling
     {
-        playerAnimator.SetBool("Flying", false);       
+        playerAnimator.SetBool("Flying", false);
         playerRigidbody.useGravity = true;
         swipePlayerScript.enabled = false;
         isFalling = false;
         isFlying = false;
 
-        if (other.gameObject.CompareTag("Ground"))
+        if (other.gameObject.CompareTag("PlatformSideSurface"))
+        {
+            other.transform.parent.GetChild(0).gameObject.SetActive(false);     
+        }
+        else if (other.gameObject.CompareTag("Ground"))
         {
             gameManagerScript.GameOver();
             playerRigidbody.velocity = Vector3.zero;
-
         }
         
     }

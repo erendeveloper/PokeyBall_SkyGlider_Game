@@ -20,8 +20,7 @@ public class PlatformGenerator : MonoBehaviour
     //random prefab sizes
     private const float MinScaleRate = 0.5f;
     private const float MaxScaleRate = 1.5f;
-    private const float MaxDeviationRate = 0.25f; //deviation for position X and Z
-    private const float MaxDeviationDistanceY= 2f;  //deviation for position Y
+    private const float MaxDeviationRate = 0.2f; //deviation for position X and Z
 
     //platform creation possibility
     private const int CreateChancePercent = 50;
@@ -41,13 +40,13 @@ public class PlatformGenerator : MonoBehaviour
 
        if(GridLength %2 == 0)
         {
-            leftBottomPositionX = generationAreaPosition.position.x - GridLength / 2 - PlatformDistance / 2;
-            leftBottomPositionZ = generationAreaPosition.position.z - GridLength / 2 - PlatformDistance / 2;
+            leftBottomPositionX = generationAreaPosition.position.x - (GridLength / 2 - 0.5f) * PlatformDistance ;
+            leftBottomPositionZ = generationAreaPosition.position.z - (GridLength / 2 - 0.5f) * PlatformDistance ;
         }
         else
         {
-            leftBottomPositionX = generationAreaPosition.position.x - (GridLength - 1) / 2;
-            leftBottomPositionZ = generationAreaPosition.position.z - (GridLength - 1) / 2;
+            leftBottomPositionX = generationAreaPosition.position.x - ((GridLength - 1) / 2) * PlatformDistance;
+            leftBottomPositionZ = generationAreaPosition.position.z - ((GridLength - 1) / 2) * PlatformDistance;
         }
         FillGrid(leftBottomPositionX, leftBottomPositionZ);
         DisableScript();
@@ -66,22 +65,35 @@ public class PlatformGenerator : MonoBehaviour
     void SpawnItem(Vector3 position)
     {
         if (RandomCreateChance())
-        {
-            int itemType = Random.Range(1, 3);
+        {          
             Vector3 scaleFactor;
-            GameObject prefabType;
+            float positionFactorY;
+
+            GameObject prefabType;//cube or cylinder
+
+            int itemType = Random.Range(1, 3);      
+            
             if (itemType == 1) //cube
             {
                 prefabType = cubePrefab;
                 scaleFactor = RandomCubeScaleFactor();
+                positionFactorY = 0.5f;
             }
             else //cylinder
             {
                 prefabType = cylinderPrefab;
                 scaleFactor = RandomCylinderScaleFactor();
+                positionFactorY = 1f;
             }
             GameObject item = Instantiate(prefabType, position + RandomPositionOffset(), Quaternion.identity);
-            item.transform.localScale = new Vector3(item.transform.localScale.x * scaleFactor.x, item.transform.localScale.y, item.transform.localScale.z * scaleFactor.z);
+
+            float localScaleX = item.transform.localScale.x * scaleFactor.x;
+            float localScaleY = item.transform.localScale.y * scaleFactor.y;
+            float localScaleZ = item.transform.localScale.z * scaleFactor.z;
+            item.transform.localScale = new Vector3(localScaleX,localScaleY,localScaleZ);
+
+            float positionY = item.transform.localScale.y * positionFactorY;//stand item on ground
+            item.transform.position = new Vector3(item.transform.position.x, positionY, item.transform.position.z);
         }
         
    }
@@ -104,25 +116,24 @@ public class PlatformGenerator : MonoBehaviour
         float x = PlatformDistance * deviationRateX * RandomSign();
 
         float deviationRateZ = Random.Range(0, MaxDeviationRate);
-        float z = PlatformDistance * deviationRateX * RandomSign();
+        float z = PlatformDistance * deviationRateZ * RandomSign();
 
-        float y = Random.Range(0, MaxDeviationDistanceY) * RandomSign();
-
-        return new Vector3(x, y, z);
+        return new Vector3(x, 0, z);
     }
     Vector3 RandomCubeScaleFactor()
     {
         float x = Random.Range(MinScaleRate, MaxScaleRate);
-
+        float y = Random.Range(MinScaleRate, MaxScaleRate);
         float z= Random.Range(MinScaleRate, MaxScaleRate);
 
-        return new Vector3(x, 1, z);
+        return new Vector3(x, y, z);
     }
     Vector3 RandomCylinderScaleFactor()
     {
-        float scaleRate= Random.Range(MinScaleRate, MaxScaleRate);
+        float xz= Random.Range(MinScaleRate, MaxScaleRate);
+        float y = Random.Range(MinScaleRate, MaxScaleRate);
 
-        return new Vector3(scaleRate, 1, scaleRate);
+        return new Vector3(xz, y, xz);
     }
     int RandomSign()
     {
