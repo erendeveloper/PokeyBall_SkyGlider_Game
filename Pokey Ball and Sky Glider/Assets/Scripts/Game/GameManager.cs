@@ -7,16 +7,16 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     //Access other script
-    private UIController UIControllerScript;
+    private UIController uiControllerScript;
 
     private void Start()
     {
         Application.targetFrameRate = 300;
-        UIControllerScript = this.GetComponent<UIController>();
+        uiControllerScript = this.GetComponent<UIController>();
     }
     public void GameOver()
     {
-        UIControllerScript.OpenGameOver();
+        uiControllerScript.OpenGameOver();
     }
     public void RestartGame()
     {

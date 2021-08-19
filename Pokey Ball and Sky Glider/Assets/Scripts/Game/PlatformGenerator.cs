@@ -97,7 +97,7 @@ public class PlatformGenerator : MonoBehaviour
         }
         
    }
-
+    #region Random
     bool RandomCreateChance()//possibility creation on a cell of grid
     {
         int createChance = Random.Range(0, MaxCreateChancePercent);
@@ -144,6 +144,7 @@ public class PlatformGenerator : MonoBehaviour
         }
         else return -1;
     }
+    #endregion
     void DisableScript()//Disabling script after generation
     {
         this.enabled = false;

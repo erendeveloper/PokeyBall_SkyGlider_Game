@@ -42,6 +42,7 @@ public class StickController : MonoBehaviour
 
     }
 
+    #region Stick states
     public void Pull()
     {
         SetStickSpeed(0f);
@@ -67,7 +68,7 @@ public class StickController : MonoBehaviour
     {
         stickAnimator.SetFloat("SpeedMultiplier", value);
     }
-
+    #endregion
     public void DisableStickComponents()//components that won't be used again
     {
         swipeStickScript.enabled = false;

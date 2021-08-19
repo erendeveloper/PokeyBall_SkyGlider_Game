@@ -35,7 +35,6 @@ public class CameraFollow : MonoBehaviour
         }
 
     }
-    Vector3 velocity = Vector3.zero;
     public void StartFollowing()
     {
         this.transform.parent = targetCameraPosition;

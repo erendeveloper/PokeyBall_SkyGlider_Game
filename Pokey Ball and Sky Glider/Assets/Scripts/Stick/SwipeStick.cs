@@ -11,7 +11,7 @@ public class SwipeStick : MonoBehaviour
    //Access other script
     StickController stickcontrollerScript;
 
-    private float firstPosition; 
+    private float firstPosition; //first touch position
 
     private float currenPositionRate;  //0 min, 1 max, swiping percentage
 
