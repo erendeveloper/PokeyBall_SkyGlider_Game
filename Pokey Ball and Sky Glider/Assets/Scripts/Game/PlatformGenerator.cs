@@ -15,12 +15,12 @@ public class PlatformGenerator : MonoBehaviour
 
     private readonly int GridLength = 10; //one grid size
 
-    private const float PlatformDistance = 8;// distance between each cell on the grid
+    private const float PlatformDistance = 10;// distance between each cell on the grid
 
     //random prefab sizes
     private const float MinScaleRate = 0.5f;
     private const float MaxScaleRate = 1.5f;
-    private const float MaxDeviationRate = 0.2f; //deviation for position X and Z
+    private const float MaxDeviationRate = 0.175f; //deviation for position X and Z
 
     //platform creation possibility
     private const int CreateChancePercent = 50;
