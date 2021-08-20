@@ -22,16 +22,15 @@ public class PlayerController : MonoBehaviour
     private const float MaxWingAngle = 45f;
 
     private Vector3 forceVelocity; //throwing velocity depending on stick tension
-    private Quaternion initialBodyQuaternion;
 
     private bool isFlying = false;
     private bool isFalling = false;
     private bool isWingAngleIdentity = true; //Quaternion.eular(0,0,0)
 
-    //bounce factors on platforms
-    private const float CubeBounceFactor = 1f;
-    private const float CylinderBounceFactor = 2f;
-
+    //bounce speeds calculated on one bounceHeight =10f
+    private float cubeBounceSpeed=14.00714f;
+    private float cylinderBounceSpeed=19.80909f;
+     
     private const float GravityFactor=0.2f;//Factor of falling speed, applied on gravity
 
     
@@ -42,11 +41,6 @@ public class PlayerController : MonoBehaviour
         swipePlayerScript = GetComponent<SwipePlayer>();
         gameManagerScript = Camera.main.GetComponent<GameManager>();
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        initialBodyQuaternion = body.localRotation;
-    }
 
     // Update is called once per frame
     void Update()
@@ -54,11 +48,11 @@ public class PlayerController : MonoBehaviour
         RotateBody();
     }
 
-    public void AssignVelocity(float rate) //for throwing
+    public void AssignPlayerVelocity(float rate) //for throwing
     {
         float radiantAngle = ThrowingAngle * Mathf.Deg2Rad;
-        float z= Mathf.Cos(radiantAngle) * ThrowingSpeed*rate;
-        float y= Mathf.Sin(radiantAngle) * ThrowingSpeed*rate;
+        float z = Mathf.Cos(radiantAngle) * ThrowingSpeed * rate;
+        float y = Mathf.Sin(radiantAngle) * ThrowingSpeed * rate;
 
         forceVelocity = new Vector3(0, y, z);
 
@@ -115,15 +109,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)//Top of platform for bouncing
     {
+        RotateOnPlatform();
         if (other.CompareTag("CubeTopSurface"))
         {
-            RotateOnPlatform();
-            playerRigidbody.velocity=new Vector3(playerRigidbody.velocity.x, forceVelocity.y * CubeBounceFactor, playerRigidbody.velocity.z);
+            BounceOnCube();
         }
         else if (other.CompareTag("CylinderTopSurface"))
         {
-            RotateOnPlatform();
-            playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, forceVelocity.y * CylinderBounceFactor, playerRigidbody.velocity.z);
+            BounceOnCylinder();
         }
     }
     private void OnCollisionEnter(Collision other)//Sides of platform for falling
@@ -178,5 +171,19 @@ public class PlayerController : MonoBehaviour
             body.localRotation = Quaternion.Lerp(body.localRotation, Quaternion.Euler(targetRotation), ForwardRotationSpeed * Time.deltaTime);
         }     
     }
-
+    #region Bounce
+    private void Bounce(float bounceSpeed)
+    {
+        playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, bounceSpeed, playerRigidbody.velocity.z);
+    }
+    //call these to bounce
+    private void BounceOnCube()
+    {
+        Bounce(cubeBounceSpeed);
+    }
+    private void BounceOnCylinder()
+    {
+        Bounce(cylinderBounceSpeed);
+    }
+    #endregion
 }

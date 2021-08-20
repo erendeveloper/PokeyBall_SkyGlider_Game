@@ -58,7 +58,7 @@ public class StickController : MonoBehaviour
         isStickPulling = false;
         stickAnimator.SetTrigger("Release");
         SetStickSpeed(1f);
-        playerControllerScript.AssignVelocity(swipeStickScript.GetCurrentPositionRate());
+        playerControllerScript.AssignPlayerVelocity(swipeStickScript.GetCurrentPositionRate());
     }
     public void ReleaseFinished()
     {
